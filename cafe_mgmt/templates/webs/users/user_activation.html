@@ -1,0 +1,43 @@
+{% extends './user_base.html' %}
+{% load static %}
+
+{% block context_base %}
+  <div class="container mt-5 hide-block" id="userActivationSection">
+    <br>
+    <h2>User activated successfully..</h2>
+  </div>
+{% endblock %}
+
+
+{% block bottom_script %}
+<script>
+
+  $(document).ready(function () {
+      checkUserAuth();
+  });
+
+  async function checkUserAuth() {
+
+    const urlParams = new URLSearchParams(window.location.search);
+    const email = urlParams.get('email');
+    const activation_slug = urlParams.get('activation_slug');
+    let apiUrl = `/users/activation-api/?email=${email}&activation_slug=${activation_slug}`
+    const response = await fetch(apiUrl, {
+      method: 'GET',
+    })
+
+    const apiResp = await response.json()
+    console.log('---apiResp =', apiResp)
+
+    if (apiResp.status == "success") {
+      document.getElementById("userActivationSection").classList.remove("hide-block");
+    } else {
+      document.getElementById("infoCallout").classList.remove("hide-block");
+      document.getElementById("infoCalloutMsg").innerHTML = `<p>Invalid activation link!!</p>`;
+    }
+  }
+
+</script>
+{% endblock  %}
+
+

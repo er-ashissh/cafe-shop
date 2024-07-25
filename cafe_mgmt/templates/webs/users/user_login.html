@@ -1,0 +1,68 @@
+{% extends './user_base.html' %}
+{% load static %}
+
+{% block context_base %}
+  <div class="container mt-5" id="userLoginSection">
+    <br>
+    <h2>User Login</h2>
+    <div class="row">
+      <div class="col-sm-4">
+        <br>
+        <form id="userLoginForm" method="post">
+          <div class="mb-3 mt-3">
+            <div class="form-item">
+                <span id="non_field_errors_err" class="form-err-msg"></span>
+            </div>
+          </div>
+          <div class="mb-3 mt-3">
+            <label for="email">Email:</label>
+            <input type="email" class="form-control" id="email" name="email" placeholder="Enter email.."required />
+            <span id="email_err" class="form-err-msg"></span>
+          </div>
+          <div class="mb-3">
+            <label for="password">Password:</label>
+            <input type="password" class="form-control"  id="password" name="password" placeholder="Enter password.." required />
+            <span id="password_err" class="form-err-msg"></span>
+          </div>
+          <br>
+          <button type="submit" class="btn btn-secondary">Login</button>
+        </form>
+      </div>
+    </div>
+  </div>
+{% endblock %}
+
+
+{% block bottom_script %}
+<script>
+
+    const thisForm = document.getElementById('userLoginForm')
+        thisForm.addEventListener('submit', async function (e) {
+            e.preventDefault()
+            clearFieldErr();
+            const formData = new FormData(thisForm).entries()
+            const response = await fetch('/users/login-api/', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(Object.fromEntries(formData))
+            })
+
+            const apiResp = await response.json()
+            console.log('---apiResp =', apiResp)
+            let api_result = handleApiResp(apiResp)
+            if (api_result) {
+                document.getElementById("userLoginForm").reset();
+                infoCalloutElem = document.getElementById("infoCallout");
+                document.getElementById("userLoginSection").classList.add("hide-block");
+                document.getElementById("infoCallout").classList.remove("hide-block");
+                document.getElementById("infoCalloutMsg").innerHTML = `<p>You Login Successfully,<br>
+                  Click here <a href='/users/about/' target='_blank'>link</a> to access about page..</p>`;
+                setCookie("cafe-user-id", apiResp.data.user_id, 2);
+                //redirect_to("/resto/customer-login/");
+            }
+        })
+
+</script>
+{% endblock  %}
+
+

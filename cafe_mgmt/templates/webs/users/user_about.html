@@ -1,0 +1,43 @@
+{% extends './user_base.html' %}
+{% load static %}
+
+{% block context_base %}
+  <div class="container mt-5 hide-block" id="userAboutSection">
+    <br>
+    <h2>About Cafe Recipe's</h2>
+    <div class="row">
+      <div class="col-sm-4">
+        <br>
+        <h5>Hazelnut Haven recipe:</h5><br>
+        <ul>
+          <li><b>Brew the Coffee</b>: Start by brewing a cup of your favorite coffee. A medium to dark roast works well to balance the sweetness.</li><br>
+          <li><b>Add Hazelnut Syrup</b>: Pour the brewed coffee into a large mug. Add the hazelnut syrup and stir until well mixed.</li><br>
+          <li><b>Sweeten the Coffee</b>: Add the sugar to the coffee mixture. Stir until the sugar is completely dissolved.</li><br>
+        </ul>
+      </div>
+    </div>
+  </div>
+{% endblock %}
+
+
+{% block bottom_script %}
+<script>
+
+  $(document).ready(function () {
+      checkUserAuth();
+  });
+
+  function checkUserAuth() {
+    const cafeUserId = getCookie("cafe-user-id");
+    if (cafeUserId == null) {
+      document.getElementById("infoCallout").classList.remove("hide-block");
+      document.getElementById("infoCalloutMsg").innerHTML = `<p>You unauthorize to access this page!!</p>`;
+    } else {
+      document.getElementById("userAboutSection").classList.remove("hide-block");
+    }
+  }
+
+</script>
+{% endblock  %}
+
+

@@ -1,0 +1,83 @@
+{% extends './user_base.html' %}
+{% load static %}
+
+{% block context_base %}
+  <div class="container mt-5" id="userRegisterSection">
+    <br>
+    <h2>User Register</h2>
+    <div class="row">
+      <div class="col-sm-4">
+        <br>
+        <form id="userRegisterForm" method="post">
+          <div class="mb-3 mt-3">
+            <div class="form-item">
+                <span id="non_field_errors_err" class="form-err-msg"></span>
+            </div>
+          </div>
+          <div class="mb-3 mt-3">
+            <label for="first_name">First Name:</label>
+            <input type="text" class="form-control" id="first_name" name="first_name" placeholder="Enter first name.." required />
+            <span id="first_name_err" class="form-err-msg"></span>
+          </div>
+          <div class="mb-3 mt-3">
+            <label for="last_name">Last Name:</label>
+            <input type="text" class="form-control" id="last_name" name="last_name" placeholder="Enter last name.." />
+            <span id="last_name_err" class="form-err-msg"></span>
+          </div>
+          <div class="mb-3 mt-3">
+            <label for="email">Email:</label>
+            <input type="email" class="form-control" id="email" name="email" placeholder="Enter email.."required />
+            <span id="email_err" class="form-err-msg"></span>
+          </div>
+          <div class="mb-3 mt-3">
+            <label for="mob_number">Mobile Number:</label>
+            <input type="number" class="form-control" id="mob_number" name="mob_number" placeholder="Enter mobile number.." required />
+            <span id="mob_number_err" class="form-err-msg"></span>
+          </div>
+          <div class="mb-3">
+            <label for="password">Password:</label>
+            <input type="password" class="form-control" id="password" name="password" placeholder="Enter password.." required />
+            <span id="password_err" class="form-err-msg"></span>
+          </div>
+          <br>
+          <button type="submit" class="btn btn-secondary">Register</button>
+        </form>
+      </div>
+    </div>
+  </div>
+{% endblock %}
+
+
+{% block bottom_script %}
+<script>
+
+    const thisForm = document.getElementById('userRegisterForm')
+        thisForm.addEventListener('submit', async function (e) {
+            e.preventDefault()
+            clearFieldErr();
+            const formData = new FormData(thisForm).entries()
+            const response = await fetch('/users/register-api/', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(Object.fromEntries(formData))
+            })
+
+            const apiResp = await response.json()
+            console.log('---apiResp =', apiResp)
+            let api_result = handleApiResp(apiResp)
+            if (api_result) {
+                document.getElementById("userRegisterForm").reset();
+                infoCalloutElem = document.getElementById("infoCallout");
+                document.getElementById("userRegisterSection").classList.add("hide-block");
+                document.getElementById("infoCallout").classList.remove("hide-block");
+                document.getElementById("infoCalloutMsg").innerHTML = `<p>You Register Successfully,<br><br>
+                    Click here <a href='${apiResp.data.activation_link}' target='_blank'>link</a> to activate your account..<br>
+                    Click here <a href='/users/login/' target='_blank'>link</a> to login into your account..</p>`;
+                //redirect_to("/resto/customer-login/");
+            }
+        })
+
+</script>
+{% endblock  %}
+
+
